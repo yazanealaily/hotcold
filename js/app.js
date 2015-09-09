@@ -28,7 +28,9 @@ function playGame() {
 	var userGuess;
 	var counter = 0;
 
-	$("#guessButton").on("click", function(){
+	$("#guessButton").on("click", function(event){
+
+		event.stopPropagation();
 
 		userGuess = parseInt($(":text").val());
 
