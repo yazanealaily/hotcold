@@ -1,109 +1,69 @@
-function newGame() {
-	$("#feedback").html("What's Your Guess?");
-}
+(function ($) {
+    'use strict'
 
-function randNum() {
-	magicNum = Math.floor(Math.random() * 100 + 1);
-	}
+    var randomNumber,
+        userGuess,
+        guessCounter = 0
 
-function checkInput(number) {
+    $(document).ready( function() {
+        setupModal()
 
-	if(number < 1 || number > 100) {
-		return false;
-	}
+        $('#guessButton').click( function(event) {
+            event.preventDefault()
 
-	else if(isNaN(number)) {
-		return false;
-	}
+            userGuess = $('#userGuess').val()
+            if (isNaN(userGuess || userGuess >= 100)) {
+                alert('please enter valid number!')
+                $('#userGuess').val('')
+            } else { // number is valid
+                $('#count').html(++guessCounter)
+                letsPlay()
+            }
+        })
 
-	return true;
-}
+        $('.new').click(newGame)
 
-function success() {
-	$("#feedback").html("Success!");
-}
+        newGame()
+    })
 
-function playGame() {
+    function letsPlay() {
+        $('#guessList').append('<li>'+userGuess+'</li>')
 
-	var userGuess;
-	var counter = 0;
+        if (userGuess == randomNumber) {
+            feedback("You've got it!")
+        } else if (Math.abs(randomNumber - userGuess) <= 10) {
+            feedback("You're hot")
+        } else if (Math.abs(randomNumber - userGuess) <= 20) {
+            feedback("You're warm")
+        } else if (Math.abs(randomNumber - userGuess) <= 30) {
+            feedback("You're cold")
+        } else {
+            feedback("You're freezing")
+        }
 
-	$("#guessButton").on("click", function(event){
+        $('#userGuess').val('')
+    }
 
-		event.stopPropagation();
+    function setupModal() {
+        /*--- Display information modal box ---*/
+        $(".what").click(function(){
+            $(".overlay").fadeIn(1000);
+        });
 
-		userGuess = parseInt($(":text").val());
+        /*--- Hide information modal box ---*/
+        $("a.close").click(function(){
+            $(".overlay").fadeOut(1000);
+        });
+    }
 
-		if(!checkInput(userGuess)) {return false;}
+    function newGame() {
+        feedback("What's Your Guess?");
+        randomNumber = Math.floor(Math.random() * 100 + 1);
+        console.log(randomNumber)
+    }
 
-		else if(Math.abs(userGuess - magicNum) == 0) {
-				alert("Congratulations! You Have A Correct Guess!");
-				$("#guessList").append("<li>" + userGuess + "</li>");
-				counter++;
-				$("#count").html(counter.toString());	
-				return true;
-			}
+    function feedback(msg) {
+        $('#feedback').html(msg)
+    }
 
-		else {
-				if(Math.abs(userGuess - magicNum) > 50) {
-					$("#feedback").html("Ice Cold!");
-					$("#guessList").append("<li>" + userGuess + "</li>");
-					counter++;
-					$("#count").html(counter.toString());					
-					return false;
-				}
-
-				else if(Math.abs(userGuess - magicNum) > 30) {
-					$("#feedback").html("Cold!");
-					$("#guessList").append("<li>" + userGuess + "</li>");
-					counter++;
-					$("#count").html(counter.toString());					
-					return false;
-				}
-
-				else if(Math.abs(userGuess - magicNum) > 10) {
-					$("#feedback").html("Hot!");
-					$("#guessList").append("<li>" + userGuess + "</li>");
-					counter++;
-					$("#count").html(counter.toString());					
-					return false;
-				}
-
-				else if(Math.abs(userGuess - magicNum) < 10) {
-					$("#feedback").html("Very Hot!");
-					$("#guessList").append("<li>" + userGuess + "</li>");
-					counter++;
-					$("#count").html(counter.toString());						
-					return false;
-				}
-			}
-	});
-
-}
-
-$(document).ready(function(){
-
-	/*--- Display information modal box ---*/
-  	$(".what").click(function(){
-    	$(".overlay").fadeIn(1000);
-
-  	});
-
-  	/*--- Hide information modal box ---*/
-  	$("a.close").click(function(){
-  		$(".overlay").fadeOut(1000);
-  	});
-
-  	$(".new").on("click", function(){
-  		newGame();
-  		randNum();
-
-  		while(playGame()){
-  		};
-
-  	});
-
-});
-
-
-
+}(jQuery))
